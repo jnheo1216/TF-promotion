@@ -1,8 +1,11 @@
+require('dotenv').config();
+
 const mail = require('./mail.js');
 
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
+const mysql = require('mysql');
 const app = express();
 
 const PORT = 8080;
@@ -16,18 +19,31 @@ app.use(cors());
 // }
 // app.use(cors(corsOptions));
 
+const con = mysql.createConnection({
+    host: process.env.DBHOST,
+    user: process.env.DBUSER,
+    password: process.env.DBPASSWORD,
+    database: 'promotion_user_data'
+});
+
+con.connect(function(err) {
+    if (err) throw err;
+    console.log('db Connected!');
+});
+
+
 const users = [
     {
         id: 1,
         name:'허진녕', 
         email:'hjeionyng94@gmail.com', 
-        phoneNum: '01025201924'
+        phone: '01025201924'
     },
     {
         id: 2,
         name:'홍길동', 
         email:'hkd@gmail.com', 
-        phoneNum: '01012341234'
+        phone: '01012341234'
     },
 ];
 
