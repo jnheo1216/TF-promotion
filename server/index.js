@@ -32,31 +32,36 @@ con.connect(function(err) {
 });
 
 
-const users = [
-    {
-        id: 1,
-        name:'허진녕', 
-        email:'hjeionyng94@gmail.com', 
-        phone: '01025201924'
-    },
-    {
-        id: 2,
-        name:'홍길동', 
-        email:'hkd@gmail.com', 
-        phone: '01012341234'
-    },
-];
+// const users = [
+//     {
+//         id: 1,
+//         name:'허진녕', 
+//         email:'hjeionyng94@gmail.com', 
+//         phone: '01025201924'
+//     },
+//     {
+//         id: 2,
+//         name:'홍길동', 
+//         email:'hkd@gmail.com', 
+//         phone: '01012341234'
+//     },
+// ];
 
 app.get('/', (req, res) => {
 	res.send('Hello, World!');
 });
 
 app.get("/api/users", (req, res) => {
-    res.json({ok:true, users: users});
+    const sql = 'SELECT * FROM users';
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json({ok:true, users: result});
+    });
+    // res.json({ok:true, users: users});
 });
 
 app.post("/api/users", (req, res) => {
-    const {id, name, email, phoneNum} = req.body;
+    const {name, email, phoneNum} = req.body;
     // 중복 검사 예정
     const isvalid = false;
     let email_data = {
@@ -69,7 +74,7 @@ app.post("/api/users", (req, res) => {
         mail.send(email_data);
     }
 
-    users.push({id, name, email, phoneNum});
+    users.push({name, email, phoneNum});
     res.json({ok:true, users: users});
 
 });
