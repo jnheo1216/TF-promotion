@@ -11,8 +11,14 @@ const email ={
     }
 }
 
-exports.send = async (option) => {
-    nodemailer.createTransport(email).sendMail(option, (error, info) => {
+exports.send = async (to_email, to_name) => {
+    let email_data = {
+        from: "hjeionyng@naver.com",
+        to: to_email,
+        subject: to_name+"님 이벤트 참여완료!!",
+        html: "<p>success!!</p>"
+    };
+    nodemailer.createTransport(email).sendMail(email_data, (error, info) => {
         if (error) {
             console.log(error);
         }

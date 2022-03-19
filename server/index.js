@@ -57,26 +57,30 @@ app.get("/api/users", (req, res) => {
         if (err) throw err;
         res.json({ok:true, users: result});
     });
-    // res.json({ok:true, users: users});
 });
 
 app.post("/api/users", (req, res) => {
-    const {name, email, phoneNum} = req.body;
-    // 중복 검사 예정
-    const isvalid = false;
-    let email_data = {
-        from: "hjeionyng@naver.com",
-        to: email,
-        subject: name+"님 이벤트 참여완료!!",
-        html: "<p>success!!</p>"
-    };
-    if (isvalid) {
-        mail.send(email_data);
-    }
+    const {name, email, phone} = req.body;
 
-    users.push({name, email, phoneNum});
-    res.json({ok:true, users: users});
-
+    const sql = 'SELECT id FROM users WHERE phone=?';
+    con.query(sql, [phone], (err, result, fields) => {
+        if (result[0] == undefined) {
+            // 중복자 없음
+            console.log('없');
+            const sql2 = 'INSERT INTO users(name, email, phone) VALUES(?, ?, ?)';
+            con.query(sql2, [name, email, phone], (err, result, fields) => {
+                if (err) throw err;
+                console.log(result);
+            });
+            mail.send(email, name);
+            res.json({ok:true, message: '이벤트 참여 완료'});
+        }
+        else {
+            // 중복자 있음
+            console.log('있');
+            res.json({ok:false, message: '이미 참여한 유저입니다'});
+        }
+    });
 });
 
 app.get("/api/users/name", (req, res) => {
