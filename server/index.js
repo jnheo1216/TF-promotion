@@ -64,6 +64,7 @@ app.post("/api/users", (req, res) => {
 
     const sql = 'SELECT id FROM users WHERE phone=?';
     con.query(sql, [phone], (err, result, fields) => {
+        if (err) throw err;
         if (result[0] == undefined) {
             // 중복자 없음
             console.log('없');
@@ -85,14 +86,24 @@ app.post("/api/users", (req, res) => {
 
 app.get("/api/users/name", (req, res) => {
     const userName = req.query.userName;
-    const user = users.filter(data => data.name == userName);
-    res.json({ok:true, user: user});
+    const sql = 'SELECT * FROM users WHERE name=?';
+    con.query(sql, [userName], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+    // const user = users.filter(data => data.name == userName);
+    // res.json({ok:true, user: user});
 });
 
 app.get("/api/users/:userid", (req, res) => {
     const userId = req.params.userid;
-    const user = users.filter(data => data.id == userId);
-    res.json({ok:true, user: user});
+    const sql = 'SELECT * FROM users WHERE id=?';
+    con.query(sql, [userId], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+    // const user = users.filter(data => data.id == userId);
+    // res.json({ok:true, user: user});
 });
 
 
