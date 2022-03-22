@@ -82,18 +82,7 @@ app.post("/api/users", (req, res) => {
             res.json({ok:false, message: '이미 참여한 유저입니다'});
         }
     });
-});
-
-app.get("/api/users/name", (req, res) => {
-    const userName = req.query.userName;
-    const sql = 'SELECT * FROM users WHERE name=?';
-    con.query(sql, [userName], (err, result, fields) => {
-        if (err) throw err;
-        res.json({ok:true, user: result});
-    });
-    // const user = users.filter(data => data.name == userName);
-    // res.json({ok:true, user: user});
-});
+});  // C
 
 app.get("/api/users/:userid", (req, res) => {
     const userId = req.params.userid;
@@ -102,10 +91,44 @@ app.get("/api/users/:userid", (req, res) => {
         if (err) throw err;
         res.json({ok:true, user: result});
     });
-    // const user = users.filter(data => data.id == userId);
-    // res.json({ok:true, user: user});
-});
+});  // R
 
+app.post("/api/users/:userid", (req, res) => {
+    const userId = req.params.userid;
+    const {name, email, phone} = req.body;
+    const sql = 'UPDATE users SET ? WHERE id='+userId;
+    con.query(sql, [name, email, phone], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+});  // U
+
+app.delete("/api/users/:userid", (req, res) => {
+    const userId = req.params.userid;
+    const sql = 'DELETE FROM users WHERE id=?';
+    con.query(sql, [userId], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+});  // D
+
+app.get("/api/users/search/name", (req, res) => {
+    const userName = req.query.name;
+    const sql = 'SELECT * FROM users WHERE name=?';
+    con.query(sql, [userName], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+}); 
+
+app.get("/api/users/search/email", (req, res) => {
+    const email = req.query.email;
+    const sql = 'SELECT * FROM users WHERE email=?';
+    con.query(sql, [email], (err, result, fields) => {
+        if (err) throw err;
+        res.json({ok:true, user: result});
+    });
+});
 
 const server = app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`);
